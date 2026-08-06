@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY . .
 
-RUN chmod +x mvnw && ./mvnw clean package -DskipTests
+RUN apt update && apt install -y maven
+
+RUN mvn clean package -DskipTests
 
 CMD ["java", "-jar", "target/*.jar"]
