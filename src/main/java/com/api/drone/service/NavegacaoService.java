@@ -1,6 +1,7 @@
 package com.api.drone.service;
 
 import com.api.drone.algorithm.BuscaEmLargura;
+import com.api.drone.enums.Acao;
 import com.api.drone.enums.Direcao;
 import com.api.drone.enums.Tipo;
 import com.api.drone.model.DroneData;
@@ -20,7 +21,7 @@ public class NavegacaoService {
         this.grafo = grafo;
     }
 
-    public Direcao movimentarDrone(DroneData data){
+    public Acao movimentarDrone(DroneData data){
 
         Node atual = grafo.buscarNode(data.getX(), data.getY());
         if(atual == null){
@@ -58,30 +59,58 @@ public class NavegacaoService {
             Node exploracao = explorar(atual);
 
             if (exploracao != null) {
-                return calcularDirecao(atual, exploracao);
+                return calcularAcao(atual, exploracao, data.getOrientacao());
             }
             else{
-                return Direcao.SEM_CAMINHO;
+                return Acao.SEM_CAMINHO;
             }
         }
         if(caminho.size() == 1){
-            return Direcao.CHEGOU;
+            return Acao.CHEGOU;
         }
 
 
         Node proximo = caminho.get(1);
 
-        return calcularDirecao(atual, proximo);
+        return calcularAcao(atual, proximo, data.getOrientacao());
 
     }
 
 
 
-    private Direcao calcularDirecao(Node atual, Node proximo){
-        if(proximo.getX() > atual.getX()) return Direcao.LESTE;
-        if(proximo.getX() < atual.getX()) return Direcao.OESTE;
-        if(proximo.getY() > atual.getY()) return Direcao.SUL;
-        else return Direcao.NORTE;
+        private Direcao calcularDirecaoAbsoluta(Node atual, Node proximo){
+        if (proximo.getX() > atual.getX()) {
+            return Direcao.LESTE;
+        }
+
+        if (proximo.getX() < atual.getX()) {
+            return Direcao.OESTE;
+        }
+
+        if (proximo.getY() > atual.getY()) {
+            return Direcao.NORTE;
+        }
+
+        return Direcao.SUL;
+    }
+
+
+    private Acao calcularAcao(Node atual, Node proximo, Direcao orientacao){
+
+        Direcao destino = calcularDirecaoAbsoluta(atual, proximo);
+
+        if(destino == orientacao){
+            return Acao.FRENTE;
+        }
+        if(destino == oposta(orientacao)){
+            return Acao.TRAS;
+        }
+        if(destino == direita(orientacao)){
+            return  Acao.DIREITA;
+        }
+        else{
+            return  Acao.ESQUERDA;
+        }
     }
 
     public Node explorar(Node atual){
@@ -92,5 +121,42 @@ public class NavegacaoService {
             }
         }
         return null;
+    }
+
+    private Direcao oposta (Direcao direcao){
+
+        switch(direcao){
+            case NORTE:
+                return Direcao.SUL;
+            case SUL:
+                return Direcao.NORTE;
+            case LESTE:
+                return Direcao.OESTE;
+            case OESTE:
+                return Direcao.LESTE;
+            default:
+                return direcao;
+        }
+
+    }
+
+    private Direcao direita(Direcao direcao){
+
+        switch(direcao){
+            case NORTE:
+                return Direcao.LESTE;
+
+            case LESTE:
+                return Direcao.SUL;
+
+            case SUL:
+                return Direcao.OESTE;
+
+            case OESTE:
+                return Direcao.NORTE;
+
+            default:
+                return direcao;
+        }
     }
 }
