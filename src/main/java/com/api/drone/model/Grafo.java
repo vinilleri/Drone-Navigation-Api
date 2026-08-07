@@ -19,6 +19,16 @@ public class Grafo {
         adjacencias.get(origem).add(destino);
         adjacencias.get(destino).add(origem);
     }
+    public void removerEdge(Node origem, Node destino){
+        if(adjacencias.containsKey(origem)){
+            adjacencias.get(origem).remove(destino);
+        }
+
+        if(adjacencias.containsKey(destino)){
+            adjacencias.get(destino).remove(origem);
+        }
+    }
+
     public boolean checkEdge(Node origem, Node destino) {
 
      return adjacencias.get(origem).contains(destino);

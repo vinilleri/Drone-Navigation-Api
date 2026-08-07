@@ -39,9 +39,7 @@ public class NavegacaoService {
 
         for(Posicao posicao: data.getAdjacentes()){
 
-            if(posicao.getTipo() == Tipo.OBSTACULO){
-                continue;
-            }
+
 
             Node vizinho = grafo.buscarNode(posicao.getX(), posicao.getY());
 
@@ -49,9 +47,20 @@ public class NavegacaoService {
                vizinho = new Node(posicao.getX(), posicao.getY(), posicao.getTipo(),false);
                 grafo.addNode(vizinho);
             }
-            if(!grafo.checkEdge(atual,vizinho)) {
-                grafo.addEdge(atual, vizinho);
+            else {
+
+                vizinho.setTipo(posicao.getTipo());
             }
+            if(posicao.getTipo() != Tipo.OBSTACULO) {
+
+                if (!grafo.checkEdge(atual, vizinho)) {
+                    grafo.addEdge(atual, vizinho);
+                }
+            }
+            else{
+                grafo.removerEdge(atual,vizinho);
+            }
+
         }
 
         List<Node> caminho = buscaEmLargura.buscaEmLargura(atual,destino);
