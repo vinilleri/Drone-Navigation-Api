@@ -21,9 +21,13 @@ public class NavegacaoController {
     }
 
     @PostMapping("/controlar-drone")
-    public ResponseEntity<?> controlarDrone(@RequestBody DroneData data){
+    public ResponseEntity<?> controlarDrone(@RequestBody DroneData data) {
+
         Acao acao = service.movimentarDrone(data);
 
-        return ResponseEntity.status(HttpStatus.OK).body(acao);
+        MovimentoDTO movimentoDTO =
+                new MovimentoDTO(data.getOrientacao(), acao);
+
+        return ResponseEntity.ok(movimentoDTO);
     }
 }
