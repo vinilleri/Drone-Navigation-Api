@@ -24,7 +24,6 @@ public class NavegacaoController {
     public ResponseEntity<?> controlarDrone(@RequestBody DroneData data){
         Acao acao = service.movimentarDrone(data);
 
-        MovimentoDTO movimentoDTO = new MovimentoDTO(data.getOrientacao(),acao);
-        return ResponseEntity.status(HttpStatus.OK).body(movimentoDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(acao);
     }
 }

@@ -56,7 +56,7 @@ public class NavegacaoService {
 
         List<Node> caminho = buscaEmLargura.buscaEmLargura(atual,destino);
         if(caminho.isEmpty()){
-            Node exploracao = explorar(atual);
+            Node exploracao = explorar(atual, destino);
 
             if (exploracao != null) {
                 return calcularAcao(atual, exploracao, data.getOrientacao());
@@ -113,14 +113,20 @@ public class NavegacaoService {
         }
     }
 
-    public Node explorar(Node atual){
-
+    public Node explorar(Node atual, Node destino){
+            Node melhorVizinho = null;
+            int menorDistancia = Integer.MAX_VALUE;
         for(Node vizinho: grafo.getAdjacentes(atual)){
             if(!vizinho.isExplorado() && vizinho.getTipo() == Tipo.LIVRE){
-                return vizinho;
+                int distancia = Math.abs(vizinho.getX() - destino.getX()) +
+                                Math.abs(vizinho.getY() - destino.getY());
+                if(distancia < menorDistancia){
+                    menorDistancia = distancia;
+                    melhorVizinho = vizinho;
+                }
             }
         }
-        return null;
+        return melhorVizinho;
     }
 
     private Direcao oposta (Direcao direcao){
